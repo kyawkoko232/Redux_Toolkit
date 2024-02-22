@@ -20,7 +20,7 @@ import { configureStore} from '@reduxjs/toolkit';
 
 
 export const store =  configureStore({
-
+    //Slice တွေခွဲပြီးရင် Object ထဲ slice နာမည်တွေရေးထည့်မယ်။
     reducer : { },
 });
 ```
@@ -80,17 +80,18 @@ export const {increment, decrement } = counterSlice.actions;
 export default counterSlice.reducer;
 ```
 
-* createSlice ထဲက function object ထဲမှာ 
+* createSlice()  function  ထဲမှာ object parsing လုပ်
     * name 
-        * ကိုယ်ကြိုက်တဲ့နာမည်ပေး။ store ထဲမှာပြန်သုံးဖို့ <a href="#store"> Store</a>
+        * ကိုယ်ကြိုက်တဲ့နာမည်ပေး။ store.js ထဲမှာပြန်ခေါ်သုံးဖို့။ <a href="#store"> Store</a>
     * initialState 
-        * နာမည်အတိုင်းဘဲ ကိုယ့် state ရဲ့ initial data ဖြစ်တယ်။ useState လိုမျိုးမြင်ပေးလို့ရတယ်။ 
-    * reducers ဆိုတဲ့ properties တွေပါတယ်။
+        * နာမည်အတိုင်းဘဲ ကိုယ့် state ရဲ့ initial data ဖြစ်တယ်။ useState,setState(""); လိုမျိုးမြင်ပေးလို့ရတယ်။ 
+    * reducers ကို object parsing ပေးပြီး properties တွေပါတယ်။
         * Reducers are like the instructions on what to do with each slice of cake
         * They define how to the information in a particular slice can be changed or updated
 * Reducers Object ထဲမှာ Actions or methods  တွေပါမယ်။
     * Actions are like request or commands you give to change a specific slice of cake
     *  For example, you might have an action called "Eat Slice  a bite  that instruction how to take a bite from slice
+    *  Actions are payloads of information that send data from your application to your Redux store. In a slice, you define action creators, which are functions that create action objects to be dispatched to the Redux store.
 
 export  ထုတ်ရင်သတိထားမယ်။  `actions` s ပါတယ်။
 ```jsx
@@ -113,3 +114,75 @@ export const store =  configureStore({
     },
 });
 ```
+
+`useSelector()` allows us to read data from the redux store
+`useDispatch()` 
+* The Dispatch function is used to send actions to the store, triggering update to the Application state
+* In simpler term it let you `change the state` in your redux `store` from within you React component
+  
+in component
+
+```jsx
+import {useSelector, useDispatch} from 'react-redux';
+import { increment, decrement } from '../features/counter/counterSlice';
+
+import React from 'react'
+
+const Counter = () => {
+
+  //Read the data from the store  
+  const count =  useSelector((state)=> state.counter.value); 
+
+  //changing the data by sending actions to the store
+  const dispatch = useDispatch();
+
+  return (
+    <>
+    <div>{count} </div>
+    <button onClick={()=> dispatch(increment()) }>+ </button>
+    <button onClick={()=> dispatch(decrement())}>- </button>
+    
+    </>
+  )
+}
+
+export default Counter
+```
+
+ <br>
+
+  state.counter က  store.js counter property ကနေလာတယ်၊။ 
+```jsx
+import { configureStore} from '@reduxjs/toolkit'; 
+import counterReducer from '../features/counter/counterSlice'; 
+
+
+export const store =  configureStore({ 
+    reducer : { 
+        counter : counterReducer 
+    }, 
+}); 
+```
+
+.value ကကျတော့ slice , initialState  value ကနေလာတယ် 
+```jsx
+export const counterSlice = createSlice({ 
+    name : "counter", 
+    initialState : {value : 0}, 
+    reducers : { 
+        increment : (state) => { 
+            state.value += 1; 
+        }, 
+        increment : (state) => { 
+            state.value -= 1; 
+        }, 
+    } 
+
+}); 
+```
+
+```jsx
+<button onClick={()=> dispatch(increment()) }>+ </button>
+```
+
+increment က function မလို့ `()`လိုတယ်။
